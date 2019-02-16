@@ -135,6 +135,38 @@ sudo route add -net 10.20.30.0 gw 172.17.0.2 netmask 255.255.255.0
 ssh 10.20.30.40
 ```
 
+# Environment Variables
+
+```
+SNX_SERVER
+```
+
+Mandatory. IP address or name of the Checkpoint VPN server
+
+```
+SNX_PASSWORD
+```
+
+Mandatory. String corresponding to the password of VPN client
+
+```
+SNX_USER
+```
+
+Optional if SNX_CERTIFICATE is provided, otherwise mandatory. String corresponding to the username of VPN client
+
+```
+SNX_CERTIFICATE
+```
+
+Optional if SNX_USER is provided, otherwise mandatory. String corresponding to the filename of the VPN client certificate.
+
+If specified, a mount point with the path tho the file should be present. Example:
+
+```
+  -v /path/to/my_snx_vpn_certificate.p12:/my_snx_vpn_certificate.p12 \
+```
+
 # Troubleshooting
 
 This image has just been tested without username and with certificate, and with snx build 800007075 obtained from:
@@ -274,13 +306,14 @@ With below content, adjusting "SNX_DOCKER_NAME" and routes to match your needs:
 ```
 #! /bin/bash
 SNX_DOCKER_NAME="snx-vpn"
-SNX_DOCKER_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $SNX_DOCKER_NAME)"
-if [ -z "$SNX_DOCKER_IP" ]; then
-    docker start $SNX_DOCKER_NAME
-    SNX_DOCKER_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $SNX_DOCKER_NAME)"
+IS_DOCKER_RUNNING="$(docker inspect -f '{{ .State.Running }}' $SNX_DOCKER_NAME)"
+if [ "true" == $IS_DOCKER_RUNNING ]; then
+    exit 0
 fi
-#sudo route add -net a.b.c.0 netmask 255.255.255.0 gw $SNX_DOCKER_IP
-#sudo route add -net x.y.z.0 netmask 255.255.255.0 gw $SNX_DOCKER_IP
+docker start $SNX_DOCKER_NAME
+SNX_DOCKER_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $SNX_DOCKER_NAME)"
+# Add custom rules behind this line
+#sudo route add -net 10.20.30.0 netmask 255.255.255.0 gw $SNX_DOCKER_IP
 ```
 
 2. Make it executable
