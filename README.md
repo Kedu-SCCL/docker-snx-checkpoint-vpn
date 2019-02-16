@@ -1,4 +1,4 @@
-    Copyright 2018 Kedu S.C.C.L.
+    Copyright 2019 Kedu S.C.C.L.
 
     Email-to-ticket is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
