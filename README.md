@@ -164,7 +164,7 @@ Optional if SNX_USER is provided, otherwise mandatory. String corresponding to t
 If specified, a mount point with the path tho the file should be present. Example:
 
 ```
-  -v /path/to/my_snx_vpn_certificate.p12:/my_snx_vpn_certificate.p12 \
+  -v /path/to/my_snx_vpn_certificate.p12:/my_snx_vpn_certificate.p12
 ```
 
 # Troubleshooting
