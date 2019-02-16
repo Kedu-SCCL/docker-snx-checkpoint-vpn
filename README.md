@@ -276,8 +276,8 @@ With below content, adjusting "SNX_DOCKER_NAME" and routes to match your needs:
 SNX_DOCKER_NAME="snx-vpn"
 SNX_DOCKER_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $SNX_DOCKER_NAME)"
 if [ -z "$SNX_DOCKER_IP" ]; then
-	echo >&2 'error: missing SNX_DOCKER_IP, is $SNX_DOCKER_NAME docker running?'
-	exit 1;
+    docker start $SNX_DOCKER_NAME
+    SNX_DOCKER_IP="$(docker inspect --format '{{ .NetworkSettings.IPAddress }}' $SNX_DOCKER_NAME)"
 fi
 #sudo route add -net a.b.c.0 netmask 255.255.255.0 gw $SNX_DOCKER_IP
 #sudo route add -net x.y.z.0 netmask 255.255.255.0 gw $SNX_DOCKER_IP
@@ -292,8 +292,7 @@ chmod +x /usr/local/bin/snx-vpn.sh
 3. Test it:
 
 ```
-docker start snx-vpn
-/usr/local/bin/snx-vpn.sh
+snx-vpn.sh
 ```
 
 # Credits
