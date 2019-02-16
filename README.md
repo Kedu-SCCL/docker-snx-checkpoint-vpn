@@ -298,6 +298,9 @@ docker start snx-vpn
 This image is inspired in the excellent work of below people:
 
 https://github.com/iwanttobefreak/docker-snx-vpn
+
 https://github.com/mnasiadka/docker-snx-dante
+
 https://unix.stackexchange.com/a/453727
+
 https://gitlab.com/jamgo/docker-juniper-vpn
