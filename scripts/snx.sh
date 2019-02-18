@@ -23,14 +23,14 @@
 server=$SNX_SERVER
 user=$SNX_USER
 password=$SNX_PASSWORD
-certificate=$SNX_CERTIFICATE
 snx_command=""
+certificate_path="/certificate.p12"
 
-if [ ! -z "$certificate" ]; then
+if [ -f "$certificate_path" ]; then
     if [ ! -z "$user" ]; then
-        snx_command="snx -s $server -u $user -c /$certificate"
+        snx_command="snx -s $server -u $user -c $certificate_path"
     else
-        snx_command="snx -s $server -c /$certificate"
+        snx_command="snx -s $server -c $certificate_path"
     fi
 else
     snx_command="snx -s $server -u $user"

@@ -45,16 +45,12 @@ docker run --name snx-vpn \
   -e SNX_SERVER=vpn_server_ip_address \
   -e SNX_USER=user \
   -e SNX_PASSWORD=secret \
-  -e SNX_CERTIFICATE="my_snx_vpn_certificate.p12" \
-  -v /path/to/my_snx_vpn_certificate.p12:/my_snx_vpn_certificate.p12 \
+  -v /path/to/my_snx_vpn_certificate.p12:/certificate.p12 \
   -ti \
   -d kedu/snx-checkpoint-vpn
 ```
 
-Notes:
-
-* "SNX_CERTIFICATE" should match the container destination filename
-* The container destination directory must be "/"
+**IMPORTANT**: specify a volume with "/certificate.p12" as container path
 
 2. Get private IP address of docker container
 
@@ -85,16 +81,12 @@ docker run --name snx-vpn \
   -v /lib/modules:/lib/modules \
   -e SNX_SERVER=vpn_server_ip_address \
   -e SNX_PASSWORD=secret \
-  -e SNX_CERTIFICATE="my_snx_vpn_certificate.p12" \
-  -v /path/to/my_snx_vpn_certificate.p12:/my_snx_vpn_certificate.p12 \
+  -v /path/to/my_snx_vpn_certificate.p12:/certificate.p12 \
   -ti \
   -d kedu/snx-checkpoint-vpn
 ```
 
-Notes:
-
-* "SNX_CERTIFICATE" should match the container destination filename
-* The container destination directory must be "/"
+**IMPORTANT**: specify a volume with "/certificate.p12" as container path
 
 2. Get private IP address of docker container
 
@@ -133,19 +125,16 @@ Mandatory. String corresponding to the password of VPN client
 SNX_USER
 ```
 
-Optional if SNX_CERTIFICATE is provided, otherwise mandatory. String corresponding to the username of VPN client
+Optional if certificate volume has been provided, otherwise mandatory. String corresponding to the username of VPN client
+
+# Allowed volumes
 
 ```
-SNX_CERTIFICATE
+/certificate.p12
 ```
 
-Optional if SNX_USER is provided, otherwise mandatory. String corresponding to the filename of the VPN client certificate.
+A VPN client certificate. If present the SNX binary will be invoked with "-c" parameter pointing to this certificate file.
 
-If specified, a mount point with the path tho the file should be present. Example:
-
-```
-  -v /path/to/my_snx_vpn_certificate.p12:/my_snx_vpn_certificate.p12
-```
 
 # Troubleshooting
 
@@ -182,7 +171,7 @@ Expected output similar to:
 ```
   PID TTY      STAT   TIME COMMAND
     1 pts/0    Ss     0:00 /bin/bash /root/snx.sh
-   29 ?        Ss     0:00 snx -s ip_vpn_server -c /vpn_certificate_filename.p12
+   29 ?        Ss     0:00 snx -s ip_vpn_server -c /certificate.p12
    32 pts/0    S+     0:00 /bin/bash
    37 pts/1    Ss     0:00 bash
    47 pts/1    R+     0:00 ps ax
@@ -246,7 +235,7 @@ Expected output similar to:
 8. Manually try to connect:
 
 ```
-snx -s ip_vpn_server -c /vpn_certificate_filename.p12
+snx -s ip_vpn_server -c /certificate.p12
 ```
 
 Expected output similar to:
