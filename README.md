@@ -135,6 +135,111 @@ Optional if certificate volume has been provided, otherwise mandatory. String co
 
 A VPN client certificate. If present the SNX binary will be invoked with "-c" parameter pointing to this certificate file.
 
+# Routes
+
+Since it's the container the one that connects to VPN server is the one that receives the routes. In order to list all of them perform following command from the docker host ("snx-vpn" is the container name in this example)::
+
+```
+docker exec -ti snx-vpn route -n | grep -v eth0
+```
+
+Expected output similar to:
+
+```
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+10.20.30.0       0.0.0.0         255.255.255.0   U     0      0        0 tunsnx
+10.20.40.0       0.0.0.0         255.255.255.0   U     0      0        0 tunsnx
+...
+```
+
+So yould add manually a route (see "Make the connection easier" section to check provided script):
+
+```
+sudo route add -net 10.20.30.0 netmask 255.255.255.0 gw `docker inspect --format '{{ .NetworkSettings.IPAddress }}' snx-vpn`
+```
+
+And finally test access. In this example trying to reach via SSH a remote server:
+
+```
+ssh user@10.20.30.40
+```
+
+# DNS
+
+Since it's the container the one that connects to VPN server is the one that receives the DNS servers. In order to get them you could proceed in two ways:
+
+a) Evaluating the container logs ("snx-vpn" is the container name in this example)
+
+```
+docker logs snx-vpn | grep DNS
+```
+
+Expected output similar to:
+
+```
+DNS Server          : 10.20.30.11
+Secondary DNS Server: 10.20.30.12
+```
+
+b) Checking "/etc/resolv.conf" container file ("snx-vpn" is the container name in this example)
+
+```
+docker exec -ti snx-vpn cat /etc/resolv.conf
+```
+
+Expected output similar to:
+
+```
+nameserver 10.20.30.11
+nameserver 10.20.30.12
+nameserver 8.8.4.4
+nameserver 8.8.8.8
+```
+
+Once you know the DNS servers you could proceed in one of below two ways:
+
+a) Update your docker host "/etc/resolv.conf" 
+
+```
+sudo vim /etc/resolv.conf
+```
+
+With below content:
+
+```
+nameserver 10.20.30.11
+nameserver 10.20.30.12
+```
+
+You should remember to revert back the changes once finished
+
+b) Run a local dnsmasq service. It requeries that you know the remote domains beforehand ("example.com" in this example)
+
+1. Create the file:
+
+```
+sudo vim /etc/dnsmasq.d/example.com
+```
+
+With below content:
+
+```
+server=/example.com/10.20.30.11
+```
+
+2. Restart the "dnsmasq" service
+
+
+```
+sudo service dnsmasq restart
+```
+
+3. Test it
+
+```
+ssh server.example.com
+```
 
 # Troubleshooting
 
