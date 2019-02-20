@@ -1,8 +1,29 @@
+# Table of Contents
+
+- [Introduction](#introduction)
+- [For the impatients](#for-the-impatients)
+  - [With username](#with-username)
+  - [With username and certificate](#with-username-and-certificate)
+  - [Without username and with certificate](#without-username-and-with-certificate)
+- [Environment Variables](#environment-variables)
+- [Allowed volumes](#allowed-volumes)
+- [Routes](#routes)
+- [DNS](#dns)
+- [Troubleshooting](#troubleshooting)
+- [Make the connection easier](#make-the-connection-easier)
+- [Credits](#credits)
+
+# Introduction
+
+Client for Checkpoint VPN using snx GNU/Linux client. It accepts username and/or certificate.
+
 # For the impatients
 
-## With VPN username
+## With username
 
 1. Run the container
+
+1.1. First time
 
 ```
 docker run --name snx-vpn \
@@ -11,8 +32,14 @@ docker run --name snx-vpn \
   -e SNX_SERVER=vpn_server_ip_address \
   -e SNX_USER=user \
   -e SNX_PASSWORD=secret \
-  -ti \
+  -t \
   -d kedu/snx-checkpoint-vpn
+```
+
+1.2. Subsequent times
+
+```
+docker start snx-vpn
 ```
 
 2. Get private IP address of docker container
@@ -38,6 +65,8 @@ ssh 10.20.30.40
 
 1. Run the container
 
+1.1. First time
+
 ```
 docker run --name snx-vpn \
   --cap-add=ALL \
@@ -46,11 +75,18 @@ docker run --name snx-vpn \
   -e SNX_USER=user \
   -e SNX_PASSWORD=secret \
   -v /path/to/my_snx_vpn_certificate.p12:/certificate.p12 \
-  -ti \
+  -t \
   -d kedu/snx-checkpoint-vpn
 ```
 
 **IMPORTANT**: specify a volume with "/certificate.p12" as container path
+
+1.2. Subsequent times
+
+```
+docker start snx-vpn
+```
+
 
 2. Get private IP address of docker container
 
@@ -82,7 +118,7 @@ docker run --name snx-vpn \
   -e SNX_SERVER=vpn_server_ip_address \
   -e SNX_PASSWORD=secret \
   -v /path/to/my_snx_vpn_certificate.p12:/certificate.p12 \
-  -ti \
+  -t \
   -d kedu/snx-checkpoint-vpn
 ```
 
