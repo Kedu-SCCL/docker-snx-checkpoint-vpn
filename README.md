@@ -334,6 +334,7 @@ chmod a+rx snx_install.sh
 
 ```
 chmod a+rx snx_install.sh
+./snx_install.sh
 ```
 
 Expected output:

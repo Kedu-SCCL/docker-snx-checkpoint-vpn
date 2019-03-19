@@ -36,6 +36,9 @@ else
     snx_command="snx -s $server -u $user"
 fi
 
+iptables -t nat -A POSTROUTING -o tunsnx -j MASQUERADE
+iptables -A FORWARD -i eth0 -j ACCEPT
+
 /usr/bin/expect <<EOF
 spawn $snx_command
 expect "*?assword:"
@@ -45,8 +48,5 @@ send "y\r"
 expect "SNX - connected."
 interact
 EOF
-
-iptables -t nat -A POSTROUTING -o tunsnx -j MASQUERADE
-iptables -A FORWARD -i eth0 -j ACCEPT
 
 /bin/bash
