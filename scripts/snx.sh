@@ -41,12 +41,27 @@ iptables -A FORWARD -i eth0 -j ACCEPT
 
 /usr/bin/expect <<EOF
 spawn $snx_command
-expect "*?assword:"
-send "$password\r"
-expect "*Do you accept*"
-send "y\r"
-expect "SNX - connected."
-interact
+expect {
+    "*?assword:" {
+        send "$password\r"
+        exp_continue
+    }
+    "*Do you accept*" {
+        send "y\r"
+        exp_continue
+    }
+    "SNX - connected." {
+        interact
+    }
+    timeout {
+        puts "Error: Timed out waiting for expected response."
+        exit 1
+    }
+    eof {
+        puts "Error: Expect script reached EOF unexpectedly."
+        exit 1
+    }
+}
 EOF
 
 /bin/bash
